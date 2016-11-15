@@ -12,9 +12,10 @@ namespace mns{
 		friend class list<T>;
 		friend class list_iterator<T>;
 		private:
-			list_node(const T& _value, list_node<T> * _next): value(_value), next(_next){ }
+			list_node(const T& _value, list_node<T> * _next, list_node<T> * _previous): value(_value), next(_next), previous(_previous){}
 			T value;
 			list_node<T> * next;
+			list_node<T> * previous;
 		public:
 			T getValue(){
 				return value;
@@ -31,19 +32,22 @@ namespace mns{
 		*/
 		typedef list_iterator<T> iterator;
 
+
 		/*
 			Default constructor. Initializes an empty list
 		*/
 		list(): top(NULL), bot(NULL){ }
 
+
 		/*
 			Initializes a list with a single element
 		*/
 		list(T _value){
-			list_node<T> * new_node = new list_node<T>(_value,NULL);
+			list_node<T> * new_node = new list_node<T>(_value, NULL, NULL);
 			top = new_node;
 			bot = new_node;
 		}
+
 
 		/*
 			Destroys the list
@@ -52,6 +56,7 @@ namespace mns{
 			clear();
 		}
 
+
 		/*
 			Returns if the list is empty
 			@return true if empty, false if not
@@ -59,6 +64,7 @@ namespace mns{
 		bool empty(){
 			return ((top == NULL) || (bot == NULL));
 		}
+
 
 		/*
 			Returns the size of the list
@@ -74,6 +80,7 @@ namespace mns{
 			return sum;
 		}
 
+
 		/*
 			Removes every element in the list
 		*/
@@ -87,12 +94,13 @@ namespace mns{
 			top = bot = NULL;
 		}
 
+
 		/*
-			Searches in the list to find _value
-			@parapm _value the element to find
+			Searches the list forwards to find _value
+			@param _value the element to find
 			@return index of the element if found, otherwise -1
 		*/
-		int find(T _value){
+		int find_forward(T _value){
 			if (empty()) return -1;
 			int index = 0;
 			list_node<T> * temp_node = top;
@@ -105,22 +113,45 @@ namespace mns{
 			return -1;
 		}
 
+
+		/*
+			Searches the list backwards to find _value
+			@param _value the element to find
+			@return index of the element if found, otherwide -1
+		*/
+		int find_backward(T _value){
+			if (empty()) return -1;
+			int index = 0;
+			list_node<T> * temp_node = bot;
+			do{
+				if (temp_node->value == _value) return index;
+				temp_node = temp_node->previous;
+				index++;
+			}while(temp_node!=NULL);
+
+			return -1;
+		}
+
+
 		/*
 			Inserts at the top of the list
 			@param _value the element to insert
 		*/
 		void push_top(T _value){
-			list_node<T> * new_node = new list_node<T>(_value,top);
+
+			list_node<T> * new_node = new list_node<T>(_value, top, NULL);
 			top = new_node;
+			if (top->next != NULL) (top->next)->previous = new_node;
 			if (bot == NULL) bot = new_node;
 		}
+
 
 		/*
 			Inserts at the bottom of the list
 			@param _value the element to insert
 		*/
 		void push_bottom(T _value){
-			list_node<T> * new_node = new list_node<T>(_value,NULL);
+			list_node<T> * new_node = new list_node<T>(_value,NULL, bot);
 			if (top == NULL) {
 				top = new_node;
 				bot = new_node;
@@ -130,6 +161,7 @@ namespace mns{
 			bot = new_node;
 			return;
 		}
+
 
 		/*
 			Removes an element from the top of the list
@@ -141,11 +173,14 @@ namespace mns{
 			list_node<T> * temp_node = top;
 			T temp_value = temp_node->value;
 			top = top->next;
+			if (top != NULL) top->previous = NULL;
 			if (top == NULL) bot = NULL;
+
 			delete temp_node;
 			return temp_value;
 
 		}
+
 
 		/*
 			Removes an element from the bottom of the list
@@ -154,28 +189,16 @@ namespace mns{
 		T pop_bottom(){
 			if (empty()) return T();
 
-			if (top == bot){
-				list_node<T> * temp_node = top;
-				T temp_value = temp_node->value;
-				delete temp_node;
-				top = bot = NULL;
-				return temp_value;
-			}
-
-			list_node<T> * current, * previous;
-			previous = top;
-			current = top->next;
-			while(current->next != NULL){
-				previous = current;
-				current = current->next;
-			}
-			list_node<T> * temp_node = current;
-			previous->next = NULL;
-			bot = previous;
+			list_node<T> * temp_node = bot;
 			T temp_value = temp_node->value;
-			delete temp_node;
+
+			bot = bot->previous;
+			if (bot!=NULL) bot->next = NULL;
+			if (bot == NULL) top = NULL;
+
 			return temp_value;
 		}
+
 
 		/*
 			Inserts an element in the list at a certain index
@@ -191,26 +214,26 @@ namespace mns{
 				return true;
 			}
 			int index = 1;
-			list_node<T> * previous, * current;
-			previous = top;
+			list_node<T> * current;
 			current = top->next;
 			while((index < _position) && (current != NULL)){
 				index++;
-				previous = current;
 				current = current->next;
 			}
+
 			if((current == NULL) && (index < _position)) return false;
 			if((current == NULL) && (index == _position)) {
 				push_bottom(_value);
 				return true;
 			}
 			if((current != NULL) && (index == _position)){
-				list_node<T> * temp_node = new list_node<T>(_value,current);
-				previous->next = temp_node;
+				list_node<T> * temp_node = new list_node<T>(_value,current,current->previous);
+				(current->previous)->next = temp_node;
+				current->previous = temp_node;
 				return true;
 			}
-
 		}
+
 
 		/*
 			Inserts an element in the list after a specific value
@@ -225,22 +248,22 @@ namespace mns{
 				push_bottom(_value);
 				return true;
 			}
-			list_node<T> * previous, * current, * temp_node;
+			list_node<T> * previous, * temp_node;
+
 			previous = top;
-			current = top->next;
-			while(current != NULL){
+			while(previous != NULL){
 				if (previous->value == _previous_value) {
-					temp_node = new list_node<T>(_value, current);
+					temp_node = new list_node<T>(_value, previous->next, previous);
 					previous->next = temp_node;
+					(previous->next)->previous = temp_node;
 					return true;
 				};
-				previous = current;
-				current = current->next;
+				previous = previous->next;
 			}
 
-			if (previous->value == _previous_value) push_bottom(_value);
 			return false;
 		}
+
 
 		/*
 			Insert an element in the list before a specific value
@@ -260,7 +283,8 @@ namespace mns{
 			current = top->next;
 			while(current != NULL){
 				if (current->value == _next_value){
-					temp_node = new list_node<T>(_value,current);
+					temp_node = new list_node<T>(_value,current, previous);
+					current->previous = temp_node;
 					previous->next = temp_node;
 					return true;
 				}
@@ -270,6 +294,7 @@ namespace mns{
 
 			return false;
 		}
+
 
 		/*
 			Remove an element from the list_node
@@ -295,6 +320,7 @@ namespace mns{
 				if (current->value == _value){
 					temp_node = current;
 					previous->next = current->next;
+					(current->next)->previous = previous;
 					delete temp_node;
 					return true;
 				}
@@ -304,6 +330,7 @@ namespace mns{
 
 			return false;
 		}
+
 
 		/*
 
@@ -316,26 +343,25 @@ namespace mns{
 				return false;
 			}
 
-			list_node<T> * current, * previous, * temp_node;
+			list_node<T> * current, * temp_node;
 			int i = 1;
-			previous = top;
-			current = top->next;
-			while(current != NULL && i < _index){
-				previous = current;
+			current = top;
+			while(current != NULL && i <= _index){
 				current = current->next;
 				i++;
 			}
 
 			if (current == NULL) return false;
-
 			temp_node = current;
-			previous->next = current->next;
-			delete temp_node;
+			(current->previous)->next = current->next;
 			if (current->next == NULL) {
-				bot = previous;
-			}
+				bot = current->previous;
+			}else (current->next)->previous = current->previous;
+
+			delete temp_node;
 			return true;
 		}
+
 
 		/*
 			Get the iterator start
@@ -344,12 +370,14 @@ namespace mns{
 			return list_iterator<T>(top);
 		}
 
+
 		/*
 			Get the iterator end
 		*/
 		iterator end(){
 			return list_iterator<T>(NULL);
 		}
+
 
 		/*
 			Returns a pointer the top node
@@ -358,12 +386,14 @@ namespace mns{
 			return top;
 		}
 
+
 		/*
 			Returns a pointer to the last node
 		*/
 		auto peek_bottom() ->list_node<T> *{
 			return bot;
 		}
+
 
 		/*
 			Returns a pointer to the index or NULL
@@ -374,27 +404,40 @@ namespace mns{
 
 			if (_index == 0) return top;
 
-			list_node<T> * current, * previous;
+			list_node<T> * current;
 			int i = 1;
-			previous = top;
 			current = top->next;
 			while(current != NULL && i < _index){
-				previous = current;
 				current = current->next;
 				i++;
 			}
 			return current;
 		}
 
+
 		/*
-			Prints the elements in the list
+			Forward print of the elements in the list
 		*/
-		void print(){
+		void print_forward(){
 			list_node<T> * temp = top;
-			std::cout << "List: ";
+			std::cout << "Forwards - List: ";
 			while(temp != NULL){
 				std::cout << temp->value << " " ;
 				temp = temp->next;
+			}
+			std::cout << std::endl;
+		}
+
+
+		/*
+			Backward print of the elements in the list
+		*/
+		void print_backward(){
+			list_node<T> * temp = bot;
+			std::cout << "Backwards - List: ";
+			while(temp != NULL){
+				std::cout << temp->value << " " ;
+				temp = temp->previous;
 			}
 			std::cout << std::endl;
 		}
