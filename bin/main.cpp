@@ -1,6 +1,16 @@
 #include <iostream>
 
-#include "list.hpp"
+#include "mylist.hpp"
+
+struct teststruct{
+	int number;
+	std::string str;
+	teststruct(int _number, std::string _str): number(_number), str(_str){};
+	bool operator==(const teststruct& a) const{
+		return a.number == number;
+	}
+};
+typedef struct teststruct teststructtype;
 
 int main(){
 	mns::list<std::string> emptylist1;
@@ -99,6 +109,26 @@ int main(){
 	std::cout << "Top element: " << node->getValue() << std::endl;
 	node = intlist.peek_bottom();
 	std::cout << "Bottom element: " << node->getValue() << std::endl;
+
+	std::cout << " -- " << std::endl;
+
+	mns::list<teststructtype> structlist;
+	teststructtype struct0(0,"hello1");
+	teststructtype struct1(1,"hello2");
+	teststructtype struct2(2,"hello3");
+	teststructtype struct3(3,"hello4");
+	structlist.push_top(struct0);
+	structlist.push_top(struct3);
+	structlist.push_top(struct1);
+	structlist.push_top(struct2);
+	for(mns::list<teststructtype>::iterator itr = structlist.begin(); itr != structlist.end(); itr+=1){
+		std::cout << (*itr).number << " ";
+	}
+	std::cout << std::endl;
+	std::cout << structlist.find_forward(struct1) << std::endl;
+	std::cout << structlist.find_forward(struct3) << std::endl;
+	std::cout << structlist.find_forward(struct2) << std::endl;
+	std::cout << structlist.find_forward(struct0) << std::endl;
 
 	std::cout << " -- " << std::endl;
 
@@ -225,5 +255,10 @@ int main(){
 	stringlist.print_forward();
 	stringlist.print_backward();
 
+	std::cout << " -- " << std::endl;
+
+
+
+	std::cout << std::endl;
 	return 0;
 }
