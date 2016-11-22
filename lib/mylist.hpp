@@ -4,6 +4,9 @@
 #include <iostream>
 
 namespace mns{
+
+namespace list{
+
 	template <typename T> class list;
 
 	template <typename T> class list_iterator;
@@ -472,5 +475,7 @@ namespace mns{
 		}
 
 	};
+}
+
 }
 #endif

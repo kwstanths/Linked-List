@@ -13,7 +13,7 @@ struct teststruct{
 typedef struct teststruct teststructtype;
 
 int main(){
-	mns::list<std::string> emptylist1;
+	mns::list::list<std::string> emptylist1;
 	emptylist1.print_forward();
 	emptylist1.push_top("from");
 	emptylist1.push_top("hello");
@@ -23,7 +23,8 @@ int main(){
 	emptylist1.print_backward();
 
 	std::cout << " -- " << std::endl;
-	mns::list<std::string> emptylist2;
+
+	mns::list::list<std::string> emptylist2;
 	emptylist2.print_forward();
 	emptylist2.push_bottom("the");
 	emptylist2.print_forward();
@@ -35,7 +36,7 @@ int main(){
 
 	std::cout << " -- " << std::endl;
 
-	mns::list<std::string> testlist("other");
+	mns::list::list<std::string> testlist("other");
 	testlist.print_forward();
 	std::string popped = testlist.pop_top();
 	std::cout << "Popped value: " << popped << std::endl;
@@ -55,13 +56,13 @@ int main(){
 
 	std::cout << "List sizes: " << emptylist1.size() << " " << emptylist2.size() << " " << testlist.size() << std::endl;
 	int a = 50, b = 51, c = 52, d = 53;
-	mns::list<int *> * intptrlist = new mns::list<int *>();
+	mns::list::list<int *> * intptrlist = new mns::list::list<int *>();
 	intptrlist->push_top(&a);
 	intptrlist->push_top(&b);
 	intptrlist->push_top(&c);
 	intptrlist->push_top(&d);
 	std::cout << "List: ";
-	for(mns::list<int *>::iterator itr = intptrlist->begin(); itr != intptrlist->end(); itr+=1){
+	for(mns::list::list<int *>::iterator itr = intptrlist->begin(); itr != intptrlist->end(); itr+=1){
 		std::cout << *(*itr) << " ";
 	}
 	std::cout << std::endl;
@@ -69,8 +70,7 @@ int main(){
 
 	std::cout << " -- " << std::endl;
 
-
-	mns::list<int> intlist;
+	mns::list::list<int> intlist;
 	intlist.push_bottom(4);
 	int popped1 = intlist.pop_bottom();
 	std::cout << "Popped value: " << popped1 << std::endl;
@@ -112,7 +112,7 @@ int main(){
 
 	std::cout << " -- " << std::endl;
 
-	mns::list<teststructtype> structlist;
+	mns::list::list<teststructtype> structlist;
 	teststructtype struct0(0,"hello1");
 	teststructtype struct1(1,"hello2");
 	teststructtype struct2(2,"hello3");
@@ -121,7 +121,7 @@ int main(){
 	structlist.push_top(struct3);
 	structlist.push_top(struct1);
 	structlist.push_top(struct2);
-	for(mns::list<teststructtype>::iterator itr = structlist.begin(); itr != structlist.end(); itr+=1){
+	for(mns::list::list<teststructtype>::iterator itr = structlist.begin(); itr != structlist.end(); itr+=1){
 		std::cout << (*itr).number << " ";
 	}
 	std::cout << std::endl;
@@ -196,7 +196,7 @@ int main(){
 
 	std::cout << " -- " << std::endl;
 
-	mns::list<std::string> stringlist;
+	mns::list::list<std::string> stringlist;
 	stringlist.insert(0,"other");
 	stringlist.insert_after("other", "side");
 	stringlist.insert(0,"from");
