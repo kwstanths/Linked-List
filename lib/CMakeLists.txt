@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 
 add_compile_options(-std=c++11)
 
-set(NAME "mylist")
+set(NAME "myList")
 project(${NAME})
 set(PROJECT_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_MODULE_PATH ${PROJECT_ROOT}/cmake/Modules/)
