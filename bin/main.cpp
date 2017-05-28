@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "mylist.hpp"
+#include "myList.hpp"
 
 struct teststruct{
 	int number;
