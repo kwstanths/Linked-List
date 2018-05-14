@@ -14,7 +14,7 @@ include_directories(${PROJECT_ROOT}/lib/)
 
 add_executable(${NAME} ${${NAME}_HEADERS} ${${NAME}_SOURCES})
 
-target_link_libraries(${NAME} mylist)
+target_link_libraries(${NAME} myList)
 
 
 

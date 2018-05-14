@@ -13,56 +13,58 @@ struct teststruct{
 typedef struct teststruct teststructtype;
 
 int main(){
-	mns::list::list<std::string> emptylist1;
-	emptylist1.print_forward();
-	emptylist1.push_top("from");
-	emptylist1.push_top("hello");
-	emptylist1.print_forward();
-	emptylist1.push_top("the");
-	emptylist1.push_top("other");
-	emptylist1.print_backward();
+	mns::List<std::string> emptylist1;
+	emptylist1.PrintForward();
+	emptylist1.PushTop("from");
+	emptylist1.PushTop("hello");
+	emptylist1.PrintForward();
+	emptylist1.PushTop("the");
+	emptylist1.PushTop("other");
+	emptylist1.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	mns::list::list<std::string> emptylist2;
-	emptylist2.print_forward();
-	emptylist2.push_bottom("the");
-	emptylist2.print_forward();
-	emptylist2.print_backward();
-	emptylist2.push_bottom("side");
-	emptylist2.push_top("other");
-	emptylist2.print_backward();
-	emptylist2.print_forward();
+	mns::List<std::string> emptylist2;
+	emptylist2.PrintForward();
+	emptylist2.PushBottom("the");
+	emptylist2.PrintForward();
+	emptylist2.PrintBackward();
+	emptylist2.PushBottom("side");
+	emptylist2.PushTop("other");
+	emptylist2.PrintBackward();
+	emptylist2.PrintForward();
 
 	std::cout << " -- " << std::endl;
 
-	mns::list::list<std::string> testlist("other");
-	testlist.print_forward();
-	std::string popped = testlist.pop_top();
-	std::cout << "Popped value: " << popped << std::endl;
-	testlist.print_forward();
-	testlist.push_bottom("side");
-	testlist.print_backward();
-	popped = testlist.pop_top();
-	std::cout << "Popped value: " << popped << std::endl;
-	testlist.print_forward();
-	testlist.push_top("other");
-	testlist.push_bottom("side");
-	testlist.push_top("hello");
-	testlist.print_forward();
-	testlist.print_backward();
+	mns::List<std::string> testlist("other");
+	testlist.PrintForward();
+	std::string * popped = testlist.PeekTop();
+	std::cout << "Popped value: " << *popped << std::endl;
+	testlist.PopTop();
+	testlist.PrintForward();
+	testlist.PushBottom("side");
+	testlist.PrintBackward();
+	popped = testlist.PeekTop();
+	std::cout << "Popped value: " << *popped << std::endl;
+	testlist.PopTop();
+	testlist.PrintForward();
+	testlist.PushTop("other");
+	testlist.PushBottom("side");
+	testlist.PushTop("hello");
+	testlist.PrintForward();
+	testlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	std::cout << "List sizes: " << emptylist1.size() << " " << emptylist2.size() << " " << testlist.size() << std::endl;
+	std::cout << "List sizes: " << emptylist1.Size() << " " << emptylist2.Size() << " " << testlist.Size() << std::endl;
 	int a = 50, b = 51, c = 52, d = 53;
-	mns::list::list<int *> * intptrlist = new mns::list::list<int *>();
-	intptrlist->push_top(&a);
-	intptrlist->push_top(&b);
-	intptrlist->push_top(&c);
-	intptrlist->push_top(&d);
+	mns::List<int *> * intptrlist = new mns::List<int *>();
+	intptrlist->PushTop(&a);
+	intptrlist->PushTop(&b);
+	intptrlist->PushTop(&c);
+	intptrlist->PushTop(&d);
 	std::cout << "List: ";
-	for(mns::list::list<int *>::iterator itr = intptrlist->begin(); itr != intptrlist->end(); itr+=1){
+	for(mns::List<int *>::iterator itr = intptrlist->begin(); itr != intptrlist->end(); itr+=1){
 		std::cout << *(*itr) << " ";
 	}
 	std::cout << std::endl;
@@ -70,194 +72,209 @@ int main(){
 
 	std::cout << " -- " << std::endl;
 
-	mns::list::list<int> intlist;
-	intlist.push_bottom(4);
-	int popped1 = intlist.pop_bottom();
-	std::cout << "Popped value: " << popped1 << std::endl;
-	intlist.push_bottom(5);
-	intlist.push_bottom(6);
-	intlist.pop_bottom();
-	intlist.pop_bottom();
-	intlist.push_top(3);
-	intlist.push_top(2);
-	intlist.push_top(1);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.clear();
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.push_top(78);
-	intlist.push_bottom(79);
-	intlist.pop_top();
-	intlist.push_top(80);
-	intlist.push_bottom(78);
-	intlist.print_forward();
-	intlist.print_backward();
+	mns::List<int> intlist;
+	intlist.PushBottom(4);
+	int * popped1 = intlist.PeekBottom();
+	std::cout << "Popped value: " << *popped1 << std::endl;
+	intlist.PopBottom();
+	intlist.PushBottom(5);
+	intlist.PushBottom(6);
+	intlist.PopBottom();
+	intlist.PopBottom();
+	intlist.PushTop(3);
+	intlist.PushTop(2);
+	intlist.PushTop(1);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.Clear();
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.PushTop(78);
+	intlist.PushBottom(79);
+	intlist.PopTop();
+	intlist.PushTop(80);
+	intlist.PushBottom(78);
+	intlist.PrintForward();
+	intlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	std::cout << intlist.find_forward(79) << std::endl;
-	std::cout << intlist.find_forward(78) << std::endl;
-	std::cout << intlist.find_forward(80) << std::endl;
-	std::cout << intlist.find_backward(79) << std::endl;
-	std::cout << intlist.find_backward(78) << std::endl;
-	std::cout << intlist.find_backward(80) << std::endl;
+	std::cout << std::distance(intlist.begin(), intlist.FindForward(79)) << std::endl;
+	std::cout << std::distance(intlist.begin(), intlist.FindForward(78)) << std::endl;
+	std::cout << std::distance(intlist.begin(), intlist.FindForward(80)) << std::endl;
+	std::cout << std::distance(intlist.begin(), intlist.FindBackward(79)) << std::endl;
+	std::cout << std::distance(intlist.begin(), intlist.FindBackward(78)) << std::endl;
+	std::cout << std::distance(intlist.begin(), intlist.FindBackward(80)) << std::endl;
 
 	std::cout << " -- " << std::endl;
 
-	auto node = intlist.peek_top();
-	std::cout << "Top element: " << node->getValue() << std::endl;
-	node = intlist.peek_bottom();
-	std::cout << "Bottom element: " << node->getValue() << std::endl;
+	auto node = intlist.PeekTop();
+	std::cout << "Top element: " << *node << std::endl;
+	node = intlist.PeekBottom();
+	std::cout << "Bottom element: " << *node << std::endl;
 
 	std::cout << " -- " << std::endl;
 
-	mns::list::list<teststructtype> structlist;
+	mns::List<teststructtype> structlist;
 	teststructtype struct0(0,"hello1");
 	teststructtype struct1(1,"hello2");
 	teststructtype struct2(2,"hello3");
 	teststructtype struct3(3,"hello4");
-	structlist.push_top(struct0);
-	structlist.push_top(struct3);
-	structlist.push_top(struct1);
-	structlist.push_top(struct2);
-	for(mns::list::list<teststructtype>::iterator itr = structlist.begin(); itr != structlist.end(); itr+=1){
+	structlist.PushTop(struct0);
+	structlist.PushTop(struct3);
+	structlist.PushTop(struct1);
+	structlist.PushTop(struct2);
+	for(mns::List<teststructtype>::iterator itr = structlist.begin(); itr != structlist.end(); itr+=1){
 		std::cout << (*itr).number << " ";
 	}
 	std::cout << std::endl;
-	std::cout << structlist.find_forward(struct1) << std::endl;
-	std::cout << structlist.find_forward(struct3) << std::endl;
-	std::cout << structlist.find_forward(struct2) << std::endl;
-	std::cout << structlist.find_forward(struct0) << std::endl;
+	std::cout << std::distance(structlist.begin(), structlist.FindForward(struct1)) << std::endl;
+	std::cout << std::distance(structlist.begin(), structlist.FindForward(struct3)) << std::endl;
+	std::cout << std::distance(structlist.begin(), structlist.FindForward(struct2)) << std::endl;
+	std::cout << std::distance(structlist.begin(), structlist.FindForward(struct0)) << std::endl;
 
 	std::cout << " -- " << std::endl;
 
-	intlist.clear();
-	node = intlist.peek_top();
+	intlist.Clear();
+	node = intlist.PeekTop();
 	if (node == NULL) std::cout << "No elements... " << std::endl;
-	node = intlist.peek_bottom();
+	node = intlist.PeekBottom();
 	if (node == NULL) std::cout << "No elements... " << std::endl;
 
 	std::cout << " -- " << std::endl;
 
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.insert(0,3);
-	intlist.insert(1,2);
-	intlist.insert(0,1);
-	intlist.insert(0,0);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.insert(2,10);
-	intlist.insert(0,11);
-	intlist.insert(intlist.size(),55);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.insert_after(3,42);
-	intlist.print_forward();
-	intlist.print_backward();
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.Insert(0,3);
+	intlist.Insert(1,2);
+	intlist.Insert(0,1);
+	intlist.Insert(0,0);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.Insert(2,10);
+	intlist.Insert(0,11);
+	intlist.Insert(intlist.Size(),55);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.InsertAfter(3,42);
+	intlist.PrintForward();
+	intlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	intlist.clear();
-	intlist.insert(0,1);
-	intlist.insert_after(1,2);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.insert_before(2,33);
-	intlist.insert_before(1,6);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.pop_bottom();
-	intlist.pop_top();
-	intlist.print_forward();
-	intlist.print_backward();
+	intlist.Clear();
+	intlist.Insert(0,1);
+	intlist.InsertAfter(1,2);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.InsertBefore(2,33);
+	intlist.InsertBefore(1,6);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.PopBottom();
+	intlist.PopTop();
+	intlist.PrintForward();
+	intlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	intlist.clear();
-	intlist.push_top(2);
-	intlist.insert_before(2,34);
-	intlist.print_forward();
-	intlist.print_backward();
+	intlist.Clear();
+	intlist.PushTop(2);
+	intlist.InsertBefore(2,34);
+	intlist.PrintForward();
+	intlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	intlist.clear();
-	intlist.insert(0,1);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.insert_after(1,2);
-	intlist.print_forward();
-	intlist.print_backward();
-	intlist.push_bottom(3);
-	intlist.print_forward();
-	intlist.print_backward();
+	intlist.Clear();
+	intlist.Insert(0,1);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.InsertAfter(1,2);
+	intlist.PrintForward();
+	intlist.PrintBackward();
+	intlist.PushBottom(3);
+	intlist.PrintForward();
+	intlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	mns::list::list<std::string> stringlist;
-	stringlist.insert(0,"other");
-	stringlist.insert_after("other", "side");
-	stringlist.insert(0,"from");
-	stringlist.insert_before("other","the");
-	stringlist.insert_before("from", "hello");
-	stringlist.print_forward();
-	stringlist.print_backward();
+	mns::List<std::string> stringlist;
+	stringlist.Insert(0,"other");
+	stringlist.InsertAfter("other", "side");
+	stringlist.Insert(0,"from");
+	stringlist.InsertBefore("other","the");
+	stringlist.InsertBefore("from", "hello");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	auto node1 = stringlist.peek_index(0);
-	std::cout << "Peeked node: " << node1->getValue() << std::endl;
-	auto node2 = stringlist.peek_index(2);
-	std::cout << "Peeked node: " << node2->getValue() << std::endl;
-	auto node4 = stringlist.peek_index(4);
-	std::cout << "Peeked node: " << node4->getValue() << std::endl;
+	auto node1 = stringlist.PeekIndex(0);
+	std::cout << "Peeked node: " << *node1 << std::endl;
+	auto node2 = stringlist.PeekIndex(2);
+	std::cout << "Peeked node: " << *node2 << std::endl;
+	auto node4 = stringlist.PeekIndex(4);
+	std::cout << "Peeked node: " << *node4 << std::endl;
 
 	std::cout << " -- " << std::endl;
 
-	stringlist.remove("hello");
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.remove("other");
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.remove("side");
-	stringlist.print_forward();
-	stringlist.print_backward();
+	stringlist.Remove("hello");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.Remove("other");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.Remove("side");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	stringlist.push_top("hello");
-	stringlist.insert_after("the", "other");
-	stringlist.push_bottom("side");
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.remove_index(1);
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.remove("hello");
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.remove_index(1);
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.remove_index(1);
-	stringlist.print_forward();
-	stringlist.print_backward();
+	stringlist.PushTop("hello");
+	stringlist.InsertAfter("the", "other");
+	stringlist.PushBottom("side");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.RemoveIndex(1);
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.Remove("hello");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.RemoveIndex(1);
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.RemoveIndex(1);
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-	stringlist.push_bottom("side");
-	stringlist.print_forward();
-	stringlist.print_backward();
-	stringlist.insert_after("the", "other");
-	stringlist.print_forward();
-	stringlist.print_backward();
+	stringlist.PushBottom("side");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
+	stringlist.InsertAfter("the", "other");
+	stringlist.PrintForward();
+	stringlist.PrintBackward();
 
 	std::cout << " -- " << std::endl;
 
-
+	intlist.Clear();
+	intlist.PrintForward();
+	intlist.PushTop(2);
+	intlist.PushTop(4);
+	intlist.PushTop(5);
+	intlist.PushTop(29);
+	intlist.PushTop(12);
+	intlist.PrintForward();
+	*intlist.PeekTop() -= *intlist.PeekBottom();
+	intlist.PrintForward();
+	
+	auto elem = intlist.FindForward(10);
+	/* delete *elem */
+	intlist.Remove(10);
+	intlist.PrintForward();
 
 	std::cout << std::endl;
 	return 0;

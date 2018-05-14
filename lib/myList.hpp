@@ -5,48 +5,81 @@
 
 namespace mns{
 
-namespace list{
+/**
+		list container
+		TODO FindAndRemove(...)
+		TODO Backwards iteration
+	*/
+	template <typename T> class List {
+	private:
 
-	template <typename T> class list;
-
-	template <typename T> class list_iterator;
-
-	template <typename T> class list_node{
-		friend class list<T>;
-		friend class list_iterator<T>;
+		class ListNode {
+			friend class List;
 		private:
-			list_node(const T& _value, list_node<T> * _next, list_node<T> * _previous): value(_value), next(_next), previous(_previous){}
+			ListNode(T _value, ListNode * _next, ListNode * _previous): value(_value), next(_next), previous(_previous){}
 			T value;
-			list_node<T> * next;
-			list_node<T> * previous;
+			ListNode * next;
+			ListNode * previous;
 		public:
-			T getValue(){
+			T& getValue(){
 				return value;
 			}
-	};
+		};
 
-	template <class T> class list{
-	private:
-		list_node<T> * top, * bot;
+		class ListIterator : public std::iterator<std::forward_iterator_tag, T> {
+			friend class List;
+			friend class ListNode;
+		private:
+			ListNode * pointed_;
+			ListIterator(ListNode * pointed): pointed_(pointed){ }
+
+		public:
+			T& operator*(){
+				return pointed_->value;
+			}
+
+			const ListIterator& operator++(){
+				pointed_ = pointed_->next;
+				return *this;
+			}
+
+			const ListIterator& operator+=(int amount){
+				int i = 0;
+				while(i++ < amount) {
+					pointed_ = pointed_->next;
+				}
+			}
+
+			bool operator!=(const ListIterator& other) const {
+				return this->pointed_ != other.pointed_;
+			}
+
+			bool operator==(const ListIterator& other) const {
+				return this->pointed_ == other.pointed_;
+			}
+		};
+
+		ListNode * top, * bot;
 
 	public:
 		/*
 			list's iterator
 		*/
-		typedef list_iterator<T> iterator;
+		typedef ListIterator iterator;
 
 
 		/*
 			Default constructor. Initializes an empty list
 		*/
-		list(): top(NULL), bot(NULL){ }
+		List(): top(NULL), bot(NULL){ }
 
 
 		/*
 			Initializes a list with a single element
+			@param _value The initial value
 		*/
-		list(T _value){
-			list_node<T> * new_node = new list_node<T>(_value, NULL, NULL);
+		List(T _value){
+			ListNode * new_node = new ListNode(_value, NULL, NULL);
 			top = new_node;
 			bot = new_node;
 		}
@@ -55,8 +88,8 @@ namespace list{
 		/*
 			Destroys the list
 		*/
-		~list(){
-			clear();
+		~List(){
+			Clear();
 		}
 
 
@@ -64,7 +97,7 @@ namespace list{
 			Returns if the list is empty
 			@return true if empty, false if not
 		*/
-		bool empty(){
+		bool IsEmpty(){
 			return ((top == NULL) || (bot == NULL));
 		}
 
@@ -73,8 +106,8 @@ namespace list{
 			Returns the size of the list
 			@return the size of the list
 		*/
-		int size(){
-			list_node<T> * temp_node = top;
+		int Size(){
+			ListNode * temp_node = top;
 			int sum = 0;
 			while(temp_node != NULL){
 				sum++;
@@ -87,8 +120,8 @@ namespace list{
 		/*
 			Removes every element in the list
 		*/
-		void clear(){
-			list_node<T> * temp_node;
+		void Clear(){
+			ListNode * temp_node;
 			while(top != NULL){
 				temp_node = top;
 				top = top->next;
@@ -103,17 +136,16 @@ namespace list{
 			@param _value the element to find
 			@return index of the element if found, otherwise -1
 		*/
-		int find_forward(T _value){
-			if (empty()) return -1;
-			int index = 0;
-			list_node<T> * temp_node = top;
-			do{
-				if (temp_node->value == _value) return index;
+		ListIterator FindForward(T _value){
+			if (IsEmpty()) return end();
+			
+			ListNode * temp_node = top;
+			do {
+				if (temp_node->value == _value) return ListIterator(temp_node);
 				temp_node = temp_node->next;
-				index++;
-			}while(temp_node != NULL);
+			} while (temp_node != NULL);
 
-			return -1;
+			return end();
 		}
 
 
@@ -122,17 +154,17 @@ namespace list{
 			@param _value the element to find
 			@return index of the element if found, otherwide -1
 		*/
-		int find_backward(T _value){
-			if (empty()) return -1;
-			int index = 0;
-			list_node<T> * temp_node = bot;
-			do{
-				if (temp_node->value == _value) return index;
+		ListIterator FindBackward(T _value){
+			if (IsEmpty()) return end();
+			
+			ListNode * temp_node = bot;
+			do {
+				if (temp_node->value == _value) return ListIterator(temp_node);
 				temp_node = temp_node->previous;
-				index++;
-			}while(temp_node!=NULL);
+				
+			} while(temp_node!=NULL);
 
-			return -1;
+			return end();
 		}
 
 
@@ -140,9 +172,9 @@ namespace list{
 			Inserts at the top of the list
 			@param _value the element to insert
 		*/
-		void push_top(T _value){
+		void PushTop(T _value){
 
-			list_node<T> * new_node = new list_node<T>(_value, top, NULL);
+			ListNode * new_node = new ListNode(_value, top, NULL);
 			top = new_node;
 			if (top->next != NULL) (top->next)->previous = new_node;
 			if (bot == NULL) bot = new_node;
@@ -153,8 +185,8 @@ namespace list{
 			Inserts at the bottom of the list
 			@param _value the element to insert
 		*/
-		void push_bottom(T _value){
-			list_node<T> * new_node = new list_node<T>(_value,NULL, bot);
+		void PushBottom(T _value){
+			ListNode * new_node = new ListNode(_value,NULL, bot);
 			if (top == NULL) {
 				top = new_node;
 				bot = new_node;
@@ -165,41 +197,40 @@ namespace list{
 			return;
 		}
 
+		/**
+		
+		*/
 
 		/*
-			Removes an element from the top of the list
-			@return the value removed
+			Removes the element on the top of the list
 		*/
-		T pop_top(){
-			if (empty()) return T();
+		void PopTop() {
+			if (IsEmpty()) return;
 
-			list_node<T> * temp_node = top;
+			ListNode * temp_node = top;
 			T temp_value = temp_node->value;
 			top = top->next;
 			if (top != NULL) top->previous = NULL;
 			if (top == NULL) bot = NULL;
 
 			delete temp_node;
-			return temp_value;
-
 		}
 
 
 		/*
-			Removes an element from the bottom of the list
-			@return the value removed
+			Removes the element from the bottom of the list
 		*/
-		T pop_bottom(){
-			if (empty()) return T();
+		void PopBottom() {
+			if (IsEmpty()) return;
 
-			list_node<T> * temp_node = bot;
+			ListNode * temp_node = bot;
 			T temp_value = temp_node->value;
 
 			bot = bot->previous;
 			if (bot!=NULL) bot->next = NULL;
 			if (bot == NULL) top = NULL;
 
-			return temp_value;
+			delete temp_node;
 		}
 
 
@@ -209,15 +240,15 @@ namespace list{
 			@param _value the element to insert
 			@return true if inserted, false if not
 		*/
-		bool insert(int _position, T _value){
-			if (empty() && _position != 0) return false;
+		bool Insert(int _position, T _value){
+			if (IsEmpty() && _position != 0) return false;
 
 			if (_position == 0) {
-				push_top(_value);
+				PushTop(_value);
 				return true;
 			}
 			int index = 1;
-			list_node<T> * current;
+			ListNode * current;
 			current = top->next;
 			while((index < _position) && (current != NULL)){
 				index++;
@@ -226,11 +257,11 @@ namespace list{
 
 			if((current == NULL) && (index < _position)) return false;
 			if((current == NULL) && (index == _position)) {
-				push_bottom(_value);
+				PushBottom(_value);
 				return true;
 			}
 			if((current != NULL) && (index == _position)){
-				list_node<T> * temp_node = new list_node<T>(_value,current,current->previous);
+				ListNode * temp_node = new ListNode(_value,current,current->previous);
 				(current->previous)->next = temp_node;
 				current->previous = temp_node;
 				return true;
@@ -244,19 +275,19 @@ namespace list{
 			@param _value the element to insert
 			@return true if inserted, false if not
 		*/
-		bool insert_after(T _previous_value, T _value){
-			if (empty()) return false;
+		bool InsertAfter(T _previous_value, T _value){
+			if (IsEmpty()) return false;
 
 			if (bot->value  == _previous_value) {
-				push_bottom(_value);
+				PushBottom(_value);
 				return true;
 			}
-			list_node<T> * previous, * temp_node;
+			ListNode * previous, * temp_node;
 
 			previous = top;
 			while(previous != NULL){
 				if (previous->value == _previous_value) {
-					temp_node = new list_node<T>(_value, previous->next, previous);
+					temp_node = new ListNode(_value, previous->next, previous);
 					previous->next = temp_node;
 					(previous->next)->previous = temp_node;
 					return true;
@@ -274,19 +305,19 @@ namespace list{
 			@param _value the element to insert
 			@return true if inserted, false if not
 		*/
-		bool insert_before(T _next_value, T _value){
-			if (empty()) return false;
+		bool InsertBefore(T _next_value, T _value){
+			if (IsEmpty()) return false;
 
 			if (top->value == _next_value) {
-				push_top(_value);
+				PushTop(_value);
 				return true;
 			}
-			list_node<T> * previous, * current, * temp_node;
+			ListNode * previous, * current, * temp_node;
 			previous = top;
 			current = top->next;
 			while(current != NULL){
 				if (current->value == _next_value){
-					temp_node = new list_node<T>(_value,current, previous);
+					temp_node = new ListNode(_value,current, previous);
 					current->previous = temp_node;
 					previous->next = temp_node;
 					return true;
@@ -300,23 +331,23 @@ namespace list{
 
 
 		/*
-			Remove an element from the list_node
+			Remove an element from the ListNode
 			@param _value the element to remove
 			@return true if removed, false if not
 		*/
-		bool remove(T _value){
-			if (empty()) return false;
+		bool Remove(T _value){
+			if (IsEmpty()) return false;
 
 			if (top->value == _value) {
-				pop_top();
+				PopTop();
 				return true;
 			}
 			if (bot->value == _value){
-				pop_bottom();
+				PopBottom();
 				return true;
 			}
 
-			list_node<T> * previous, * current, * temp_node;
+			ListNode * previous, * current, * temp_node;
 			previous = top;
 			current = top->next;
 			while(current != NULL){
@@ -336,17 +367,19 @@ namespace list{
 
 
 		/*
-
+			Remove an element from the list in the position index from the front
+			@param _index The position of the element to remove
+			@return true = Removed, false = Not removed
 		*/
-		bool remove_index(int _index){
-			if (empty()) return false;
+		bool RemoveIndex(int _index){
+			if (IsEmpty()) return false;
 
 			if (_index == 0) {
-				pop_top();
-				return false;
+				PopTop();
+				return true;
 			}
 
-			list_node<T> * current, * temp_node;
+			ListNode * current, * temp_node;
 			int i = 1;
 			current = top;
 			while(current != NULL && i <= _index){
@@ -367,62 +400,65 @@ namespace list{
 
 
 		/*
-			Get the iterator start
+			Get an iterator to the start of the list
 		*/
-		iterator begin() {
-			return list_iterator<T>(top);
+		ListIterator begin() {
+			return ListIterator(top);
 		}
 
 
 		/*
-			Get the iterator end
+			Get an iterator to the end of the list
 		*/
-		iterator end(){
-			return list_iterator<T>(NULL);
+		ListIterator end(){
+			return ListIterator(NULL);
 		}
 
 
 		/*
-			Returns a pointer the top node
+			Returns a raw pointer the top element. If list is empty you get nullptr
+			@return A pointer to the first data in the list
 		*/
-		auto peek_top() -> list_node<T> *{
-			return top;
+		T * PeekTop() {
+			if (IsEmpty()) return nullptr;
+			return &top->value;
 		}
 
 
 		/*
-			Returns a pointer to the last node
+			Returns a raw pointer to the last element. If list is empty you get nullptr
+			@return A pointer to the last data in the list
 		*/
-		auto peek_bottom() ->list_node<T> *{
-			return bot;
+		T * PeekBottom() {
+			if (IsEmpty()) return nullptr;
+			return &bot->value;
 		}
 
-
 		/*
-			Returns a pointer to the index or NULL
+			Returns a raw pointer to the element in the list index or NULL if such does not exist
 		*/
-		auto peek_index(int _index) -> list_node<T> * {
+		T * PeekIndex(int _index) {
 
-			if (empty()) return NULL;
+			if (IsEmpty()) return NULL;
 
-			if (_index == 0) return top;
+			if (_index == 0) return &top->getValue();
 
-			list_node<T> * current;
+			ListNode * current;
 			int i = 1;
 			current = top->next;
 			while(current != NULL && i < _index){
 				current = current->next;
 				i++;
 			}
-			return current;
+			return &current->getValue();
 		}
 
 
 		/*
 			Forward print of the elements in the list
 		*/
-		void print_forward(){
-			list_node<T> * temp = top;
+		void PrintForward(){
+			ListNode * temp = top;
 			std::cout << "Forwards - List: ";
 			while(temp != NULL){
 				std::cout << temp->value << " " ;
@@ -435,8 +471,8 @@ namespace list{
 		/*
 			Backward print of the elements in the list
 		*/
-		void print_backward(){
-			list_node<T> * temp = bot;
+		void PrintBackward(){
+			ListNode * temp = bot;
 			std::cout << "Backwards - List: ";
 			while(temp != NULL){
 				std::cout << temp->value << " " ;
@@ -447,35 +483,6 @@ namespace list{
 
 	};
 
-	template <typename T> class list_iterator : public std::iterator<std::forward_iterator_tag, T>{
-		friend class list<T>;
-	private:
-		list_node<T> *pointed;
-		list_iterator(list_node<T> * _pointed): pointed(_pointed){ }
-
-	public:
-		T& operator*(){
-			return pointed->value;
-		}
-
-		const list_iterator<T>& operator++(){
-			pointed = pointed->next;
-			return *this;
-		}
-
-		const list_iterator<T>& operator+=(int amount){
-			int i = 0;
-			while(i++ < amount) {
-				pointed = pointed->next;
-			}
-		}
-
-		bool operator!=(const list_iterator<T>& other) const {
-			return this->pointed != other.pointed;
-		}
-
-	};
 }
 
-}
 #endif
